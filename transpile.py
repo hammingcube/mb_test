@@ -32,7 +32,7 @@ def evaluate(fields, expr, depth=0):
             'is_empty': 'IS NULL',
             'is_non_empty': 'IS NOT NULL',
         }
-        return '{} {}'.format(computed, d[expr[0]])
+        return '({} {})'.format(computed, d[expr[0]])
     elif type_of_expr == 'BINARY_OPERATION':
         op, lhs, rhs = expr[0], expr[1], expr[2]
         lhs_str = evaluate(fields, lhs, depth+1)
@@ -43,9 +43,9 @@ def evaluate(fields, expr, depth=0):
             op_str = '<>'
         else:
             op_str = op
-        return '{} {} {}'.format(lhs_str, op_str, rhs_str)
+        return '({} {} {})'.format(lhs_str, op_str, rhs_str)
     op_str = ' {} '.format(expr[0])
-    return op_str.join([evaluate(fields, e) for e in expr[1:]])
+    return '({})'.format(op_str.join([evaluate(fields, e) for e in expr[1:]]))
 
 def tests():
     fields = {
