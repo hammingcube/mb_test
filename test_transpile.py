@@ -48,7 +48,30 @@ class TestTranspile(unittest.TestCase):
 	        e = evaluate(fields, expr, macros)
 	        print(e)
 	        self.assertEqual(e, expected[i])
-	       
+
+class TestComplexExpr(unittest.TestCase):
+	def test_comlex_expr(self):
+		fields = {
+		        1: 'id',
+		        2: 'name',
+		        3: 'date_joined',
+		        4: 'age',
+		    }
+		macros = {
+		        'm1': ["=", ["field", 3], None],
+		        'm2': [">", ["field", 4], 35],
+		        'is_joe': ["=", ["field", 2], "joe"],
+		    }
+		    
+		complex_expression = ["AND",
+		        ["macro", "m1"],
+		        ["macro", "m2"],
+		        ["AND", ["<", ["field", 1],  5], ["=", ["field", 2], "joe"]],
+		        ["OR", ["!=", ["field", 3], "2015-11-01"], ["=", ["field", 1], 456]],
+		        ["AND", ["<", ["field", 1],  5], ["macro", "is_joe"]],
+		]
+		output = evaluate(fields, complex_expression, macros)
+		self.assertEqual(output, "((date_joined IS NULL) AND (age > 35) AND ((id < 5) AND (name = 'joe')) AND ((date_joined <> '2015-11-01') OR (id = 456)) AND ((id < 5) AND (name = 'joe')))")
 
 if __name__ == '__main__':
     unittest.main()
