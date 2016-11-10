@@ -1,3 +1,8 @@
+
+BINARY_OPS = ['AND', 'OR', '<', '>', '=', '!=']
+UNARY_OPS = ['is_empty', 'not_empty']
+
+
 def type_of(expr):
     if type(expr) in (int, float, str, type(None)):
         return 'LITERAL'
@@ -7,6 +12,8 @@ def type_of(expr):
         elif expr[0] == 'macro':
             return 'MACRO_LOOKUP'
     if type(expr) == list and len(expr) == 2:
+        if expr[0] not in UNARY_OPS:
+            raise ValueError("Not Supported")
         return 'UNARY_OPERATION'
     if type(expr) == list and len(expr) == 3:
         return 'BINARY_OPERATION'

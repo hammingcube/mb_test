@@ -1,5 +1,16 @@
-from transpile import evaluate
+from transpile import *
 import unittest
+
+class TestIndividual(unittest.TestCase):
+	def test_literal(self):
+		self.assertEqual(eval_literal({}, 'abc'), "'abc'")
+		self.assertEqual(eval_literal({}, 23), "23")
+
+class TestNotSupported(unittest.TestCase):
+	def test_unary(self):
+		with self.assertRaises(Exception) as exc:
+			evaluate({}, ["new_unary_op", 3])
+		self.assertEqual(str(exc.exception), 'Not Supported')
 
 class TestTranspile(unittest.TestCase):
     def test_main(self):
